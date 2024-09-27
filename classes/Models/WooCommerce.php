@@ -27,7 +27,7 @@ class WooCommerce {
 				{$wpdb->posts}
 			WHERE
 				post_type='product'
-				AND post_status IN ('publish', 'draft')",
+				AND post_status='publish'",
 			ARRAY_A
 		);
 		$products = _Array::indexify( _Array::castRecursive( $products ), 'product_id' );
@@ -42,7 +42,8 @@ class WooCommerce {
 			FROM 
 				{$wpdb->posts}
 			WHERE
-				post_type='product_variation'",
+				post_type='product_variation'
+				AND post_status='publish'",
 			ARRAY_A
 		);
 		$variations = _Array::castRecursive( $variations );

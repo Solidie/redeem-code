@@ -70,7 +70,7 @@ class RedeemCode {
 			ARRAY_A
 		);
 
-		return _Array::castRecursive( $redeem );
+		return ! empty( $redeem ) ? _Array::castRecursive( $redeem ) : null;
 	}
 
 	/**

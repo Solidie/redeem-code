@@ -10,6 +10,7 @@ import {LoadingIcon} from 'solidie-materials/loading-icon/loading-icon';
 import {NumberField} from 'solidie-materials/number-field/number-field';
 import {request} from 'solidie-materials/request';
 import {ContextToast} from 'solidie-materials/toast/toast';
+import { useEffect } from "react";
 
 function AddModal({onClose}) {
 
@@ -136,10 +137,19 @@ export function ScreenCodes({products=[]}) {
 		add_modal: false
 	});
 
+	const [state, setState] = useState({
+		fetching: true,
+		redeem_codes: [],
+		segmentation: {},
+		filters: {
+			page: 1
+		}
+	});
+
 	const prod_variations = products.find(p=>p.product_id==product_id)?.variations?.map?.(p=>{return {id: p.variation_id, label: p.variation_title}}) || [];
 
 	const fetchCodes=()=>{
-
+		// setState
 	}
 
 	const toggle=(name, show=false) => {
@@ -150,10 +160,22 @@ export function ScreenCodes({products=[]}) {
 		navigate(`/codes/${product_id}/${variation_id ? `${variation_id}/` : ``}`);
 	}
 
+	useEffect(()=>{
+		fetchCodes();
+	}, [product_id, variation_id]);
+
 	return <WpDashboardFullPage>
 
 		{
-			!toggleState.add_modal ? null : <AddModal onClose={(added)=>{toggle('add_modal', false); if (added) {fetchCodes();}}}/>
+			!toggleState.add_modal ? null : 
+			<AddModal 
+				onClose={(added)=>{
+					toggle('add_modal', false); 
+					if (added) { 
+						fetchCodes(); 
+					}
+				}}
+			/>
 		}
 
 		<div className={'padding-horizontal-15'.classNames()}>

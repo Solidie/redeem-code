@@ -6,17 +6,15 @@ import {getElementDataSet, __, isEmpty, data_pointer} from 'solidie-materials/he
 import {TextField} from 'solidie-materials/text-field/text-field';
 import {LoadingIcon} from 'solidie-materials/loading-icon/loading-icon';
 import {request} from 'solidie-materials/request';
-import {ContextToast} from 'solidie-materials/toast/toast';
 
 const {user:{id: user_id}} = window[data_pointer];
 
 function RedeemForm({login_url}) {
 
-	const {ajaxToast} = useContext(ContextToast);
-
 	const [state, setState] = useState({
 		code: '',
-		applying: false
+		applying: false,
+		error_message: null
 	});
 
 	const setVal=(name, value)=>{
@@ -28,14 +26,21 @@ function RedeemForm({login_url}) {
 
 	const applyCode=()=>{
 		
-		setVal('applying', true);
+		setState({
+			...state,
+			applying: true,
+			error_message: null
+		});
 
 		request('applyRedeemCode', {code: state.code}, resp=>{
 			if ( resp.success ) {
 				window.location.replace(resp.data.redirect_to);
 			} else {
-				ajaxToast(resp);
-				setVal('applying', false);
+				setState({
+					...state,
+					applying: false,
+					error_message: resp.data?.message || __('Something went wrong')
+				});
 			}
 		})
 	}
@@ -68,6 +73,13 @@ function RedeemForm({login_url}) {
 			user_id ? null :
 			<div className={'margin-top-5 color-text-60'.classNames()}>
 				You need to <a href={login_url} className={'color-material-70 interactive'.classNames()}>login</a> first
+			</div>
+		}
+
+		{
+			!state.error_message ? null :
+			<div className={'margin-top-5 color-warning'.classNames()}>
+				{state.error_message}
 			</div>
 		}
 	</div>
