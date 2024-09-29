@@ -1,5 +1,5 @@
 <style>
 	:root{
-		<?php echo esc_html( $solidie_colors ); ?>
+		<?php echo esc_html( $redeem_colors ); ?>
 	}
 </style>

@@ -13,9 +13,9 @@ use SolidieLib\Dispatcher;
 
 use Solidie_Redeem\Setup\AdminPage;
 use Solidie_Redeem\Helpers\Utilities;
-use Solidie_Redeem\Setup\Database;
 use Solidie_Redeem\Setup\Scripts;
 use Solidie_Redeem\Setup\Shortcode;
+use SolidieLib\DB;
 
 /**
  * Main class to initiate app
@@ -51,13 +51,15 @@ class Main {
 		self::$configs = (object) array_merge( $manifest, (array) self::$configs );
 
 		// Prepare the unique app name
-		self::$configs->app_id = Utilities::getAppId( self::$configs->url );
+		self::$configs->app_id   = Utilities::getAppId( self::$configs->url );
+		self::$configs->sql_path = self::$configs->dir . 'dist/libraries/db.sql';
+		self::$configs->activation_hook = 'redeem_code_activated';
 
 		// Register Activation/Deactivation Hook
 		register_activation_hook( self::$configs->file, array( $this, 'activate' ) );
 
 		// Core Modules
-		new Database();
+		new DB( self::$configs );
 		new AdminPage();
 		new Scripts();
 		new Shortcode();
@@ -84,6 +86,6 @@ class Main {
 	 * @return void
 	 */
 	public static function activate() {
-		do_action( 'solidie_activated' );
+		do_action( 'redeem_code_activated' );
 	}
 }

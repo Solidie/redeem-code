@@ -53,9 +53,9 @@ class Scripts {
 
 		// Load dynamic colors
 		$dynamic_colors = Colors::getColors( $this->getColorScheme() );
-		$solidie_colors = '';
+		$redeem_colors = '';
 		foreach ( $dynamic_colors as $name => $code ) {
-			$solidie_colors .= '--solidie-color-' . esc_attr( $name ) . ':' . esc_attr( $code ) . ';';
+			$redeem_colors .= '--solidie-color-' . esc_attr( $name ) . ':' . esc_attr( $code ) . ';';
 		}
 
 		include Main::$configs->dir . 'templates/style.php';
