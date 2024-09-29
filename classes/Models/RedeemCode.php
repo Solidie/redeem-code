@@ -19,9 +19,9 @@ class RedeemCode {
 	/**
 	 * Save new redeem codes
 	 *
-	 * @param int $product_id
-	 * @param int $variation_id
-	 * @param array $codes
+	 * @param int   $product_id   The ID of the product
+	 * @param int   $variation_id The ID of the product variation
+	 * @param array $codes        An array of redeem codes to save
 	 * @return void
 	 */
 	public static function saveCodes( $product_id, $variation_id, $codes ) {
@@ -50,8 +50,8 @@ class RedeemCode {
 	/**
 	 * Get redeem row by code
 	 *
-	 * @param string $code
-	 * @return array
+	 * @param string $code The redeem code to look up
+	 * @return array|null The code status as an array, or null if not found
 	 */
 	public static function getCodeStatus( $code ) {
 		
@@ -74,6 +74,13 @@ class RedeemCode {
 		return ! empty( $redeem ) ? _Array::castRecursive( $redeem ) : null;
 	}
 
+	/**
+	 * Get redeem codes based on specified arguments
+	 *
+	 * @param array $args         An array of arguments to filter the codes
+	 * @param bool  $segmentation Whether to return segmentation data instead of codes
+	 * @return array              An array of codes or segmentation data
+	 */
 	public static function getCodes( array $args, $segmentation = false ) {
 		
 		global $wpdb;
@@ -155,9 +162,9 @@ class RedeemCode {
 	/**
 	 * Apply redeem code for a user
 	 *
-	 * @param int $user_id
-	 * @param string $code
-	 * @return bool
+	 * @param int    $user_id The ID of the user applying the code
+	 * @param string $code    The redeem code to apply
+	 * @return bool           True if the code was successfully applied, false otherwise
 	 */
 	public static function applyCode( $user_id, $code ) {
 
@@ -173,12 +180,12 @@ class RedeemCode {
 		$order = wc_create_order();
 		
 		// Get the variation product object
-		$variation_product = wc_get_product( $redeem['variation_id'] );
+		$the_product = wc_get_product( ! empty( $redeem['variation_id'] ) ? $redeem['variation_id'] : $redeem['product_id'] );
 		
-		if ( $variation_product && $variation_product->is_type( 'variation' ) ) {
+		if ( $the_product ) {
 
 			// Add the variation to the order
-			$order->add_product( $variation_product, 1, array(
+			$order->add_product( $the_product, 1, array(
 				'subtotal' => 0, // Set subtotal as 0
 				'total' => 0     // Set total as 0
 			));
@@ -215,7 +222,12 @@ class RedeemCode {
 		return false;
 	}
 
-	// Delete code IDs rows by code id
+	/**
+	 * Delete redeem codes by their IDs
+	 *
+	 * @param array $ids An array of code IDs to delete
+	 * @return void
+	 */
 	public static function deleteRedeemCodes( array $ids ) {
 
 		if ( empty( $ids ) ) {

@@ -28,17 +28,25 @@ class CodeController {
 	);
 
 	/**
-	 * Create or update a content category
+	 * Create or update redeem codes for a product
 	 *
-	 * @param array $codes
+	 * @param int   $product_id   The ID of the product
+	 * @param array $codes        Array of redeem codes to save
+	 * @param int   $variation_id Optional. The ID of the product variation. Default 0.
 	 * @return void
 	 */
-	public static function saveRedeemCodes( int $product_id, int $variation_id, array $codes ) {
+	public static function saveRedeemCodes( int $product_id, array $codes, int $variation_id = 0 ) {
 		
 		$codes = array_map( 'trim', $codes );
 		$codes = array_filter( $codes, function ( $code ) {
 			return ! empty( $code );
 		});
+
+		// Check if the product is simple, variable or variable subscription
+		$product = wc_get_product( $product_id );
+		if ( ! $product || ! in_array( $product->get_type(), array( 'simple', 'variable', 'variable-subscription' ) ) ) {
+			wp_send_json_error( array( 'message' => __( 'Supports simple, variable and variable subscription products only', 'redeem-code' ) ) );
+		}
 
 		RedeemCode::saveCodes( $product_id, $variation_id, $codes );
 
@@ -46,14 +54,14 @@ class CodeController {
 	}
 
 	/**
-	 * Get redeem codes for list table
+	 * Fetch redeem codes for the list table
 	 *
-	 * @param int $product_id
-	 * @param int $variation_id
-	 * 
+	 * @param int $product_id   The ID of the product
+	 * @param int $page         The current page number for pagination
+	 * @param int $variation_id Optional. The ID of the product variation. Default 0.
 	 * @return void
 	 */
-	public static function fetchRedeemCodes( int $product_id, int $variation_id, int $page ) {
+	public static function fetchRedeemCodes( int $product_id, int $page, int $variation_id = 0 ) {
 		
 		$args         = compact( 'product_id', 'variation_id', 'page' );
 		$codes        = RedeemCode::getCodes( $args );
@@ -68,9 +76,9 @@ class CodeController {
 	}
 
 	/**
-	 * Apply redeem code to current user
+	 * Apply a redeem code for the current user
 	 *
-	 * @param string $code
+	 * @param string $code The redeem code to apply
 	 * @return void
 	 */
 	public static function applyRedeemCode( string $code ) {
@@ -94,6 +102,12 @@ class CodeController {
 		}
 	}
 
+	/**
+	 * Delete specified redeem codes
+	 *
+	 * @param array $code_ids Array of redeem code IDs to delete
+	 * @return void
+	 */
 	public static function deleteRedeemCodes( array $code_ids ) {
 		
 		$code_ids = array_filter( $code_ids, 'is_numeric' );

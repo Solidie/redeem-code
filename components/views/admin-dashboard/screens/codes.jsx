@@ -270,18 +270,23 @@ export function ScreenCodes({products=[]}) {
 						/>
 					}
 				</div>
-				<div className={'d-flex align-items-center column-gap-8'.classNames()}>
+				<div className={'d-flex align-items-center column-gap-15'.classNames()}>
 					{
 						!state.selected_codes.length ? null : 
-						<i
-							className={'sicon sicon-trash font-size-18 color-error cursor-pointer'.classNames()}
-							onClick={deleteCodes}
-						></i>
+						<span className={'d-flex align-items-center column-gap-5 color-error cursor-pointer'.classNames()} onClick={deleteCodes}>
+							<i className={'sicon sicon-trash font-size-18'.classNames()}></i>
+							<span>
+								{__('Delete')}
+							</span>
+						</span>
+						
 					}
-					<i
-						className={'sicon sicon-add-square font-size-18 color-material-80 cursor-pointer interactive'.classNames()}
-						onClick={()=>toggle('add_modal', true)}
-					></i>
+					<span className={'d-flex align-items-center column-gap-5 color-material-80 cursor-pointer'.classNames()} onClick={()=>toggle('add_modal', true)}>
+						<i className={'sicon sicon-add-square font-size-18'.classNames()}></i>
+						<span>
+							{__('Add Codes')}
+						</span>
+					</span>
 				</div>
 			</div>
 
@@ -331,6 +336,15 @@ export function ScreenCodes({products=[]}) {
 				pageNumber={state.segmentation.page}
 				pageCount={state.segmentation.page_count}
 			/>
+
+			<div style={{maxWidth: '300px', margin: 'auto', marginTop: '15px', border: '1px solid #e0e0e0', padding: '15px', borderRadius: '5px', backgroundColor: 'white', textAlign: 'center'}}>
+				<h3 className={'font-weight-600'.classNames()}>
+					{__('Apply Form Shortcode')}
+				</h3>
+				<code>
+					[redeem_code_apply_form]
+				</code>
+			</div>
 		</div>
 	</WpDashboardFullPage>
 }
