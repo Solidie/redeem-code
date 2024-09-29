@@ -48,6 +48,10 @@ class CodeController {
 			wp_send_json_error( array( 'message' => __( 'Supports simple, variable and variable subscription products only', 'redeem-code' ) ) );
 		}
 
+		if ( $product->get_type() !== 'simple' && empty( $variation_id ) ) {
+			wp_send_json_error( array( 'message' => __( 'Please select a variation first', 'redeem-code' ) ) );
+		}
+
 		RedeemCode::saveCodes( $product_id, $variation_id, $codes );
 
 		wp_send_json_success();

@@ -132,6 +132,7 @@ function AddModal({onClose}) {
 
 export function ScreenCodes({products=[]}) {
 
+	const {ajaxToast} = useContext(ContextToast);
 	const {product_id, variation_id} = useParams();
 	const navigate = useNavigate();
 
@@ -140,7 +141,7 @@ export function ScreenCodes({products=[]}) {
 	});
 
 	const [state, setState] = useState({
-		fetching: true,
+		fetching: false,
 		redeem_codes: [],
 		segmentation: {},
 		selected_codes: [],
@@ -153,21 +154,30 @@ export function ScreenCodes({products=[]}) {
 
 	const fetchCodes=()=>{
 		
+		if ( !product_id ) {
+			return;
+		}
+
 		setState({
 			...state,
-			fetching: true,
-			selected_codes: []
+			fetching: true
 		});
 
 		request('fetchRedeemCodes', {product_id, variation_id, ...state.filters}, resp=>{
 			
 			const {success, data:{codes: redeem_codes=[], segmentation={}}} = resp;
 
+			if ( !success ) {
+				ajaxToast(resp);
+				return;
+			}
+
 			setState({
 				...state,
 				fetching: false,
 				redeem_codes,
-				segmentation
+				segmentation,
+				selected_codes: []
 			});
 		})
 	}
@@ -281,12 +291,16 @@ export function ScreenCodes({products=[]}) {
 						</span>
 						
 					}
-					<span className={'d-flex align-items-center column-gap-5 color-material-80 cursor-pointer'.classNames()} onClick={()=>toggle('add_modal', true)}>
-						<i className={'sicon sicon-add-square font-size-18'.classNames()}></i>
-						<span>
-							{__('Add Codes')}
+
+					{
+						!product_id ? null :
+						<span className={'d-flex align-items-center column-gap-5 color-material-80 cursor-pointer'.classNames()} onClick={()=>toggle('add_modal', true)}>
+							<i className={'sicon sicon-add-square font-size-18'.classNames()}></i>
+							<span>
+								{__('Add Codes')}
+							</span>
 						</span>
-					</span>
+					}
 				</div>
 			</div>
 
@@ -301,8 +315,9 @@ export function ScreenCodes({products=[]}) {
 							/>
 						</th>
 						<th>Code</th>
-						<th>Customer</th>
+						<th>Variation</th>
 						<th>Order</th>
+						<th>Customer</th>
 						<th>Applied</th>
 					</tr>
 				</thead>
@@ -318,8 +333,9 @@ export function ScreenCodes({products=[]}) {
 									/>
 								</td>
 								<td data-th={__('Code')}>{code.redeem_code}</td>
-								<td data-th={__('Customer')}>{code.display_name || <>&nbsp;</>}</td>
+								<td data-th={__('Variation')}>{code.variation_id || <>&nbsp;</>}</td>
 								<td data-th={__('Order')}>{code.order_id || <>&nbsp;</>}</td>
+								<td data-th={__('Customer')}>{code.display_name || <>&nbsp;</>}</td>
 								<td data-th={__('Applied')}>{code.applied_time || <>&nbsp;</>}</td>
 							</tr>
 						})
@@ -338,13 +354,19 @@ export function ScreenCodes({products=[]}) {
 				pageCount={state.segmentation.page_count}
 			/>
 
-			<div style={{maxWidth: '300px', margin: 'auto', marginTop: '15px', border: '1px solid #e0e0e0', padding: '15px', borderRadius: '5px', backgroundColor: 'white', textAlign: 'center'}}>
+			<div style={{width: '400px', maxWidth: '100%', margin: 'auto', marginTop: '35px', border: '1px solid #e0e0e0', padding: '15px', borderRadius: '5px', backgroundColor: 'white', textAlign: 'center'}}>
 				<h3 className={'font-weight-600'.classNames()}>
 					{__('Apply Form Shortcode')}
 				</h3>
 				<code>
 					[redeem_code_apply_form]
 				</code>
+				<small className={'d-block margin-top-15'.classNames()}>
+					{__('Copy the shortcode and paste it into your page or post')}
+				</small>
+				<small className={'d-block margin-top-5'.classNames()}>
+					{__('Recommended for virtual products only for now. We will add offline products support soon.')}
+				</small>
 			</div>
 		</div>
 	</WpDashboardFullPage>
