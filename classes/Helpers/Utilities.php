@@ -2,7 +2,7 @@
 /**
  * The utilities functionalities
  *
- * @package solidie
+ * @package redeem-code
  */
 
 namespace Solidie_Redeem\Helpers;
@@ -13,7 +13,7 @@ use SolidieLib\Utilities as LibUtils;
 /**
  * The class
  */
-class Utilities extends LibUtils{
+class Utilities extends LibUtils {
 
 	/**
 	 * Check if the page is a Crew Dashboard

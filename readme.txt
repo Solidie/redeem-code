@@ -1,7 +1,7 @@
-=== WooCommerce Redeem Code - Unlock Product ===
+=== Redeem Code for WooCommerce - Unlock Products with Codes ===
 Contributors: jayedul
 Donate Link: https://solidie.com
-Tags: gift card, coupon, discount
+Tags: gift card, coupon, discount, product unlock, redeem code, woocommerce
 Requires at least: 6.1
 Tested up to: 6.6.2
 Requires PHP: 7.4
@@ -9,11 +9,28 @@ Stable tag: 1.0.0
 License: GPLv3
 License URI: https://opensource.org/licenses/GPL-3.0
 
-Unlock WooCommerce product with a simple redeem code
+Easily sell and redeem product access codes for WooCommerce. Perfect for gift cards, partner sites, and exclusive product unlocks.
 
 == Description ==
 
-Sell Redeem Codes on Partner Sites for Easy Product Access in WooCommerce
+Redeem Code for WooCommerce is a powerful plugin that allows you to create and manage redeem codes for unlocking products in your WooCommerce store. This plugin is ideal for businesses looking to:
+
+- Sell gift cards or product access codes
+- Collaborate with partner sites to distribute product codes
+- Offer exclusive access to products or subscriptions
+
+= Key Features =
+
+- **Unlimited Codes**: Create as many redeem codes as you need
+- **Flexible Product Types**: Works with WooCommerce product types such as simple, variable or variable subscription
+- **Partner Site Integration**: Easily sell codes on external partner websites
+- **User-Friendly Redemption**: Simple process for customers to redeem their codes
+- **Variation Support**: Assign redeem codes to specific product variations
+
+= How It Works =
+
+1. Create redeem codes for your products
+2. Sell
 
 ==Get In Touch==
 

@@ -327,6 +327,7 @@ export function ScreenCodes({products=[]}) {
 					<TableStat
 						empty={isEmpty(state.redeem_codes)}
 						loading={state.fetching}
+						message={!product_id ? __('Please select a product first') : __('No redeem codes found')}
 					/>
 				</tbody>
 			</table>

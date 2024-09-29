@@ -2,7 +2,7 @@
 /**
  * Code handler methods
  *
- * @package solidie
+ * @package redeem-code
  */
 
 namespace Solidie_Redeem\Controllers;
@@ -15,23 +15,23 @@ use Solidie_Redeem\Models\RedeemCode;
 class CodeController {
 
 	const PREREQUISITES = array(
-		'saveRedeemCodes' => array(
-			'role' => 'administrator'
+		'saveRedeemCodes'   => array(
+			'role' => 'administrator',
 		),
-		'fetchRedeemCodes' => array(
-			'role' => 'administrator'
+		'fetchRedeemCodes'  => array(
+			'role' => 'administrator',
 		),
 		'deleteRedeemCodes' => array(
-			'role' => 'administrator'
+			'role' => 'administrator',
 		),
-		'applyRedeemCode' => array()
+		'applyRedeemCode'   => array(),
 	);
 
 	/**
 	 * Create or update redeem codes for a product
 	 *
-	 * @param int   $product_id   The ID of the product
-	 * @param array $codes        Array of redeem codes to save
+	 * @param int   $product_id   The ID of the product.
+	 * @param array $codes        Array of redeem codes to save.
 	 * @param int   $variation_id Optional. The ID of the product variation. Default 0.
 	 * @return void
 	 */
@@ -44,7 +44,7 @@ class CodeController {
 
 		// Check if the product is simple, variable or variable subscription
 		$product = wc_get_product( $product_id );
-		if ( ! $product || ! in_array( $product->get_type(), array( 'simple', 'variable', 'variable-subscription' ) ) ) {
+		if ( ! $product || ! in_array( $product->get_type(), array( 'simple', 'variable', 'variable-subscription' ), true ) ) {
 			wp_send_json_error( array( 'message' => __( 'Supports simple, variable and variable subscription products only', 'redeem-code' ) ) );
 		}
 
@@ -56,8 +56,8 @@ class CodeController {
 	/**
 	 * Fetch redeem codes for the list table
 	 *
-	 * @param int $product_id   The ID of the product
-	 * @param int $page         The current page number for pagination
+	 * @param int $product_id   The ID of the product.
+	 * @param int $page         The current page number for pagination.
 	 * @param int $variation_id Optional. The ID of the product variation. Default 0.
 	 * @return void
 	 */
@@ -69,8 +69,8 @@ class CodeController {
 
 		wp_send_json_success(
 			array(
-				'codes' => $codes,
-				'segmentation' => $segmentation
+				'codes'        => $codes,
+				'segmentation' => $segmentation,
 			)
 		);
 	}
@@ -78,7 +78,7 @@ class CodeController {
 	/**
 	 * Apply a redeem code for the current user
 	 *
-	 * @param string $code The redeem code to apply
+	 * @param string $code The redeem code to apply.
 	 * @return void
 	 */
 	public static function applyRedeemCode( string $code ) {
@@ -105,7 +105,7 @@ class CodeController {
 	/**
 	 * Delete specified redeem codes
 	 *
-	 * @param array $code_ids Array of redeem code IDs to delete
+	 * @param array $code_ids Array of redeem code IDs to delete.
 	 * @return void
 	 */
 	public static function deleteRedeemCodes( array $code_ids ) {
