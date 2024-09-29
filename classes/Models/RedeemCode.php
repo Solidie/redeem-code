@@ -9,6 +9,7 @@ namespace Solidie_Redeem\Models;
 
 use Solidie_Redeem\Helpers\Utilities;
 use SolidieLib\_Array;
+use SolidieLib\_String;
 
 /**
  * Redeem code CRUD
@@ -73,6 +74,84 @@ class RedeemCode {
 		return ! empty( $redeem ) ? _Array::castRecursive( $redeem ) : null;
 	}
 
+	public static function getCodes( array $args, $segmentation = false ) {
+		
+		global $wpdb;
+
+		$where_clause = '';
+
+		$limit  = 30;
+		$page   = max( 1, ( $args['page'] ?? 1 ) );
+		$offset = ( $page - 1 ) * $limit;
+
+		// Get only applied codes
+		if ( ( $args['applied'] ?? false ) === true ) {
+			$where_clause .= ' AND _code.order_id IS NOT NULL';
+		}
+
+		// Get only unused codes
+		if ( ( $args['non_applied'] ?? false ) === true ) {
+			$where_clause .= ' AND _code.order_id IS NULL';
+		}
+
+		// Filter product ID
+		if ( ! empty( $args['product_id'] ) ) {
+			$where_clause .= $wpdb->prepare( ' AND _code.product_id=%d', $args['product_id'] );
+		}
+
+		// Filter variation ID
+		if ( ! empty( $args['variation_id'] ) ) {
+			$where_clause .= $wpdb->prepare( ' AND _code.variation_id=%d', $args['variation_id'] );
+		}
+
+		if ( $segmentation ) {
+			$total_count = (int) $wpdb->get_var(
+				"SELECT 
+					COUNT(_code.code_id)
+				FROM
+					{$wpdb->redeem_codes} _code
+					LEFT JOIN {$wpdb->users} _user ON _code.customer_id=_user.ID
+				WHERE
+					1=1 {$where_clause}"
+			);
+
+			$page_count = ceil( $total_count / $limit );
+
+			return array(
+				'total_count' => $total_count,
+				'page_count'  => $page_count,
+				'page'        => $page,
+				'limit'       => $limit,
+			);
+		}
+
+		$codes = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT 
+					_code.*,
+					_user.display_name
+				FROM
+					{$wpdb->redeem_codes} _code
+					LEFT JOIN {$wpdb->users} _user ON _code.customer_id=_user.ID
+				WHERE
+					1=1 {$where_clause}
+				ORDER BY _code.code_id DESC
+				LIMIT %d OFFSET %d",
+				$limit,
+				$offset
+			),
+			ARRAY_A
+		);
+
+		$codes = _Array::castRecursive( $codes );
+
+		foreach ( $codes as $index => $code ) {
+			$codes[ $index ]['avatar_url'] = ! empty( $code['customer_id'] ) ? get_avatar_url( $code['customer_id'] ) : null;
+		}
+
+		return $codes;
+	}
+
 	/**
 	 * Apply redeem code for a user
 	 *
@@ -134,5 +213,21 @@ class RedeemCode {
 		}
 		
 		return false;
+	}
+
+	// Delete code IDs rows by code id
+	public static function deleteRedeemCodes( array $ids ) {
+
+		if ( empty( $ids ) ) {
+			return;
+		}
+		
+		global $wpdb;
+
+		$ids = _String::getSQLImplodesPrepared( $ids );
+
+		$wpdb->query(
+			"DELETE FROM {$wpdb->redeem_codes} WHERE code_id IN ({$ids})"
+		);
 	}
 }

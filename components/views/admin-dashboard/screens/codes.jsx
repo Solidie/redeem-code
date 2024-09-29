@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import {WpDashboardFullPage} from 'solidie-materials/backend-dashboard-container/full-page-container.jsx';
@@ -10,7 +10,9 @@ import {LoadingIcon} from 'solidie-materials/loading-icon/loading-icon';
 import {NumberField} from 'solidie-materials/number-field/number-field';
 import {request} from 'solidie-materials/request';
 import {ContextToast} from 'solidie-materials/toast/toast';
-import { useEffect } from "react";
+import {TableStat} from 'solidie-materials/table-stat';
+import {confirm} from 'solidie-materials/prompts';
+import {Pagination} from 'solidie-materials/pagination/pagination';
 
 function AddModal({onClose}) {
 
@@ -22,7 +24,7 @@ function AddModal({onClose}) {
 		prefix: '',
 		limit: 50,
 		saving: false,
-		generate: false
+		generate: false,
 	});
 
 	const setVal=(name, value)=>{
@@ -141,6 +143,7 @@ export function ScreenCodes({products=[]}) {
 		fetching: true,
 		redeem_codes: [],
 		segmentation: {},
+		selected_codes: [],
 		filters: {
 			page: 1
 		}
@@ -149,20 +152,84 @@ export function ScreenCodes({products=[]}) {
 	const prod_variations = products.find(p=>p.product_id==product_id)?.variations?.map?.(p=>{return {id: p.variation_id, label: p.variation_title}}) || [];
 
 	const fetchCodes=()=>{
-		// setState
+		
+		setState({
+			...state,
+			fetching: true,
+			selected_codes: []
+		});
+
+		request('fetchRedeemCodes', {product_id, variation_id, ...state.filters}, resp=>{
+			
+			const {success, data:{codes: redeem_codes=[], segmentation={}}} = resp;
+
+			setState({
+				...state,
+				fetching: false,
+				redeem_codes,
+				segmentation
+			});
+		})
 	}
 
 	const toggle=(name, show=false) => {
 		setToggleStates({...toggleState, [name]: show});
+	}
+
+	const setFilter=(name, value)=>{
+		setState({
+			...state,
+			filters: {
+				...state.filters,
+				[name]: value
+			}
+		})
 	}
 	
 	const setProduct=(product_id, variation_id)=>{
 		navigate(`/codes/${product_id}/${variation_id ? `${variation_id}/` : ``}`);
 	}
 
+	const toggleSelect=(code_id)=>{
+		
+		let selected_codes = [...state.selected_codes];
+
+		if (code_id) {
+			if ( selected_codes.indexOf(code_id) > -1 ) {
+				selected_codes = selected_codes.filter(c=>c!==code_id);
+			} else {
+				selected_codes.push(code_id)
+			}
+		} else {
+			if ( selected_codes.length === state.redeem_codes.length ) {
+				selected_codes = [];
+			} else {
+				selected_codes = state.redeem_codes.map(c=>c.code_id);
+			}
+		}
+
+		setState({...state, selected_codes});
+	}
+
+	const deleteCodes=()=>{
+		confirm(
+			'Sure to delete?',
+			()=>{
+				request('deleteRedeemCodes', {code_ids: state.selected_codes}, resp=>{
+					if ( resp.success ) {
+						fetchCodes();
+						return;
+					}
+
+					ajaxToast(resp);
+				})
+			}
+		)
+	}
+
 	useEffect(()=>{
 		fetchCodes();
-	}, [product_id, variation_id]);
+	}, [product_id, variation_id, state.filters.page]);
 
 	return <WpDashboardFullPage>
 
@@ -180,7 +247,9 @@ export function ScreenCodes({products=[]}) {
 
 		<div className={'padding-horizontal-15'.classNames()}>
 
-			<h3>{__('Redeem Codes')}</h3>
+			<h2 className={'font-weight-600'.classNames()}>
+				{__('Redeem Codes')}
+			</h2>
 			
 			<div className={'d-flex align-items-center justify-content-space-between'.classNames()}>
 				<div className={'d-flex align-items-center column-gap-15'.classNames()}>
@@ -194,17 +263,74 @@ export function ScreenCodes({products=[]}) {
 					{
 						isEmpty(prod_variations) ? null :
 						<DropDown
-							value={variation_id}
+							value={parseInt(variation_id)}
 							options={prod_variations}
 							onChange={id=>setProduct(product_id, id)}
 							placeholder={__('Select Variation')}
 						/>
 					}
 				</div>
-				<div className={'d-flex align-items-center'.classNames()}>
-					<span onClick={()=>toggle('add_modal', true)}>Add Code</span>
+				<div className={'d-flex align-items-center column-gap-8'.classNames()}>
+					{
+						!state.selected_codes.length ? null : 
+						<i
+							className={'sicon sicon-trash font-size-18 color-error cursor-pointer'.classNames()}
+							onClick={deleteCodes}
+						></i>
+					}
+					<i
+						className={'sicon sicon-add-square font-size-18 color-material-80 cursor-pointer interactive'.classNames()}
+						onClick={()=>toggle('add_modal', true)}
+					></i>
 				</div>
 			</div>
+
+			<table className={'table margin-top-15 margin-bottom-15'.classNames()}>
+				<thead>
+					<tr>
+						<th>
+							<input 
+								type="checkbox" 
+								checked={state.selected_codes.length && state.selected_codes.length===state.redeem_codes.length}
+								onChange={e=>toggleSelect()}
+							/>
+						</th>
+						<th>Code</th>
+						<th>Customer</th>
+						<th>Order</th>
+						<th>Applied</th>
+					</tr>
+				</thead>
+				<tbody>
+					{
+						state.redeem_codes.map(code=>{
+							return <tr key={code.code_id}>
+								<td data-th={__('Select')}>
+									<input 
+										type="checkbox" 
+										checked={state.selected_codes.indexOf(code.code_id)>-1}
+										onChange={e=>toggleSelect(code.code_id)}
+									/>
+								</td>
+								<td data-th={__('Code')}>{code.redeem_code}</td>
+								<td data-th={__('Customer')}>{code.display_name || <>&nbsp;</>}</td>
+								<td data-th={__('Order')}>{code.order_id || <>&nbsp;</>}</td>
+								<td data-th={__('Applied')}>{code.applied_time || <>&nbsp;</>}</td>
+							</tr>
+						})
+					}
+					<TableStat
+						empty={isEmpty(state.redeem_codes)}
+						loading={state.fetching}
+					/>
+				</tbody>
+			</table>
+
+			<Pagination
+				onChange={page=>setFilter('page', page)}
+				pageNumber={state.segmentation.page}
+				pageCount={state.segmentation.page_count}
+			/>
 		</div>
 	</WpDashboardFullPage>
 }

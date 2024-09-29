@@ -18,6 +18,12 @@ class CodeController {
 		'saveRedeemCodes' => array(
 			'role' => 'administrator'
 		),
+		'fetchRedeemCodes' => array(
+			'role' => 'administrator'
+		),
+		'deleteRedeemCodes' => array(
+			'role' => 'administrator'
+		),
 		'applyRedeemCode' => array()
 	);
 
@@ -37,6 +43,28 @@ class CodeController {
 		RedeemCode::saveCodes( $product_id, $variation_id, $codes );
 
 		wp_send_json_success();
+	}
+
+	/**
+	 * Get redeem codes for list table
+	 *
+	 * @param int $product_id
+	 * @param int $variation_id
+	 * 
+	 * @return void
+	 */
+	public static function fetchRedeemCodes( int $product_id, int $variation_id, int $page ) {
+		
+		$args         = compact( 'product_id', 'variation_id', 'page' );
+		$codes        = RedeemCode::getCodes( $args );
+		$segmentation = RedeemCode::getCodes( $args, true );
+
+		wp_send_json_success(
+			array(
+				'codes' => $codes,
+				'segmentation' => $segmentation
+			)
+		);
 	}
 
 	/**
@@ -64,5 +92,14 @@ class CodeController {
 		} else {
 			wp_send_json_error( array( 'message' => __( 'The code is invalid or used already!', 'redeem-code' ) ) );
 		}
+	}
+
+	public static function deleteRedeemCodes( array $code_ids ) {
+		
+		$code_ids = array_filter( $code_ids, 'is_numeric' );
+		
+		RedeemCode::deleteRedeemCodes( $code_ids );
+
+		wp_send_json_success();
 	}
 }
