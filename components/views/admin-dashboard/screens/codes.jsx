@@ -14,7 +14,7 @@ import {TableStat} from 'solidie-materials/table-stat';
 import {confirm} from 'solidie-materials/prompts';
 import {Pagination} from 'solidie-materials/pagination/pagination';
 
-function AddModal({onClose}) {
+function AddModal({product_title, variation_title, onClose}) {
 
 	const {product_id, variation_id} = useParams();
 	const {ajaxToast} = useContext(ContextToast);
@@ -71,9 +71,12 @@ function AddModal({onClose}) {
 		onClose={()=>onClose()}
 	>
 		<div className={'margin-bottom-15'.classNames()}>
-			<strong className={'d-block margin-bottom-8'.classNames()}>
+			<strong className={'d-block margin-bottom-8 font-size-18'.classNames()}>
 				{__('Add Redeem Codes')}
 			</strong>
+			<div className={'margin-bottom-15'.classNames()}>
+				<small>{product_title} {variation_title ? `(${variation_title})` : null}</small>
+			</div>
 			<TextField
 				type='textarea'
 				placeholder={__('Paste your codes one per line or generate below')}
@@ -110,22 +113,27 @@ function AddModal({onClose}) {
 			}
 		</div>
 		
-		<div className={'text-align-right'.classNames()}>
-			<button 
-				onClick={()=>onClose()} 
-				className={'button button-outlined'.classNames()}
-			>
-				{__('Cancel')}
-			</button>
-			&nbsp;
-			&nbsp;
-			<button 
-				className={'button button-primary'.classNames()} 
-				onClick={()=>saveCodes()}
-				disabled={isEmpty(state.codes) || state.saving}
-			>
-				{__('Save Codes')} <LoadingIcon show={state.saving}/>
-			</button>
+		<div className={'d-flex align-items-center margin-top-25'.classNames()}>
+			<div className={'flex-1'.classNames()}>
+				<i className={'color-text-60'.classNames()}>{__('Code will be skipped if already exists')}</i>
+			</div>
+			<div>
+				<button 
+					onClick={()=>onClose()} 
+					className={'button button-outlined'.classNames()}
+				>
+					{__('Cancel')}
+				</button>
+				&nbsp;
+				&nbsp;
+				<button 
+					className={'button button-primary'.classNames()} 
+					onClick={()=>saveCodes()}
+					disabled={isEmpty(state.codes) || state.saving}
+				>
+					{__('Save Codes')} <LoadingIcon show={state.saving}/>
+				</button>
+			</div>
 		</div>
 	</Modal>
 }
@@ -146,7 +154,8 @@ export function ScreenCodes({products=[]}) {
 		segmentation: {},
 		selected_codes: [],
 		filters: {
-			page: 1
+			page: 1,
+			status: 'all'
 		}
 	});
 
@@ -239,13 +248,15 @@ export function ScreenCodes({products=[]}) {
 
 	useEffect(()=>{
 		fetchCodes();
-	}, [product_id, variation_id, state.filters.page]);
+	}, [product_id, variation_id, state.filters]);
 
 	return <WpDashboardFullPage>
 
 		{
 			!toggleState.add_modal ? null : 
 			<AddModal 
+				product_title={products.find(p=>p.product_id==product_id)?.product_title}
+				variation_title={prod_variations.find(p=>p.id==variation_id)?.label}
 				onClose={(added)=>{
 					toggle('add_modal', false); 
 					if (added) { 
@@ -258,7 +269,7 @@ export function ScreenCodes({products=[]}) {
 		<div className={'padding-horizontal-15'.classNames()}>
 
 			<h2 className={'font-weight-600'.classNames()}>
-				{__('Redeem Codes')}
+				{__('Redeem Codes')} {state.segmentation.total_count ? `(${state.segmentation.total_count})` : null}
 			</h2>
 			
 			<div className={'d-flex align-items-center justify-content-space-between'.classNames()}>
@@ -301,6 +312,15 @@ export function ScreenCodes({products=[]}) {
 							</span>
 						</span>
 					}
+
+					<div>
+						<DropDown
+							value={state.filters.status}
+							options={[{id: 'all', label: __('All')}, {id: 'used', label: __('Used')}, {id: 'unused', label: __('Unused')}]}
+							onChange={v=>setFilter('status', v)}
+							clearable={false}
+						/>
+					</div>
 				</div>
 			</div>
 

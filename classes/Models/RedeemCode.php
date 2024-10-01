@@ -92,12 +92,12 @@ class RedeemCode {
 		$offset = ( $page - 1 ) * $limit;
 
 		// Get only applied codes
-		if ( ( $args['applied'] ?? false ) === true ) {
+		if ( ( $args['status'] ?? false ) === 'used' ) {
 			$where_clause .= ' AND _code.order_id IS NOT NULL';
 		}
 
 		// Get only unused codes
-		if ( ( $args['non_applied'] ?? false ) === true ) {
+		if ( ( $args['status'] ?? false ) === 'unused' ) {
 			$where_clause .= ' AND _code.order_id IS NULL';
 		}
 

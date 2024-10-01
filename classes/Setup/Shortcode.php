@@ -48,6 +48,7 @@ class Shortcode {
 		return '<div 
 			id="redeem_code_apply_form" 
 			data-login_url="' . esc_url( wp_login_url( get_permalink() ) ) . '"
-		>Here you go</div>';
+			style="text-align: center;"
+		>Loading...</div>';
 	}
 }

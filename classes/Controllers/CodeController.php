@@ -65,9 +65,9 @@ class CodeController {
 	 * @param int $variation_id Optional. The ID of the product variation. Default 0.
 	 * @return void
 	 */
-	public static function fetchRedeemCodes( int $product_id, int $page, int $variation_id = 0 ) {
+	public static function fetchRedeemCodes( int $product_id, int $page, int $variation_id = 0, string $status = 'all' ) {
 		
-		$args         = compact( 'product_id', 'variation_id', 'page' );
+		$args         = compact( 'product_id', 'variation_id', 'page', 'status' );
 		$codes        = RedeemCode::getCodes( $args );
 		$segmentation = RedeemCode::getCodes( $args, true );
 
@@ -90,10 +90,11 @@ class CodeController {
 		$uid = get_current_user_id();
 		
 		// Limit brute force attempt
-		$check_key    = 'redeem_code_applied_last_time';
-		$last_checked = get_user_meta( $uid, $check_key, true );
-		if ( ! empty( $last_checked ) && $last_checked > ( time() - ( 60 * 5 ) ) ) {
-			// wp_send_json_error( array( 'message' => __( 'You can try once per 5 minute', 'redeem-code' ) ) );
+		$check_key       = 'redeem_code_applied_last_time';
+		$last_checked    = get_user_meta( $uid, $check_key, true );
+		$allowed_minutes = 2;
+		if ( ! empty( $last_checked ) && $last_checked > ( time() - ( 60 * $allowed_minutes ) ) ) {
+			wp_send_json_error( array( 'message' => sprintf( __( 'You can try once per %d minute', 'redeem-code' ), $allowed_minutes ) ) );
 		}
 		update_user_meta( $uid, $check_key, time() );
 		
