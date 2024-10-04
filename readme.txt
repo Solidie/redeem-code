@@ -1,7 +1,6 @@
 === Redeem Code for WooCommerce - Unlock Products with Codes ===
 Contributors: jayedul
-Donate Link: https://solidie.com
-Tags: gift card, coupon, discount, product unlock, redeem code, woocommerce
+Tags: gift card, coupon, discount, redeem code, woocommerce
 Requires at least: 6.1
 Tested up to: 6.6.2
 Requires PHP: 7.4
@@ -9,15 +8,15 @@ Stable tag: 1.0.0
 License: GPLv3
 License URI: https://opensource.org/licenses/GPL-3.0
 
-Easily sell and redeem product access codes for WooCommerce. Perfect for gift cards, partner sites, and exclusive product unlocks.
+Easily get woocommerce product access with a redeem code. Perfect for gift cards, partner sites, and exclusive product unlocks.
 
 == Description ==
 
-Redeem Code for WooCommerce is a powerful plugin that allows you to create and manage redeem codes for unlocking products in your WooCommerce store. This plugin is ideal for businesses looking to:
+A powerful plugin that allows you to create and manage redeem codes per variation and products in your WooCommerce store. This plugin is ideal for businesses looking to:
 
-- Sell gift cards or product access codes
-- Collaborate with partner sites to distribute product codes
-- Offer exclusive access to products or subscriptions
+- Sell one time product access codes
+- Collaborate with partner sites to distribute product access
+- Offer exclusive access to products and specific variations
 
 = Key Features =
 
@@ -29,13 +28,15 @@ Redeem Code for WooCommerce is a powerful plugin that allows you to create and m
 
 = How It Works =
 
-1. Create redeem codes for your products
-2. Sell
+1. Create redeem codes for your products and variations
+2. Sell them on your website or partner sites
+3. Customer redeems the code on your website
+4. Customer gets access to the product
 
 ==Get In Touch==
 
 Please get in touch with us with any questions or for support to make sure you make the most out of Solidie.
-[Click Here to Contact Us](https://solidie.com/#contact)
+[Click Here to Contact Us](https://solidie.com/support/)
 
 Please share your valuable review [here](https://wordpress.org/plugins/redeem-code/#reviews).
 
@@ -43,7 +44,7 @@ Please share your valuable review [here](https://wordpress.org/plugins/redeem-co
 
 If you have any questions or problems using this plugin, you can write here in [support channel](https://wordpress.org/support/plugin/redeem-code/)
 
-There are several minified JavaScript file that are built with React JS and compiled with Webpack. If you want to access the unminified files for this plugin, you can do so from [here](https://github.com/Solidie/Solidie).
+There are several minified JavaScript file that are built with React JS and compiled with Webpack. If you want to access the unminified files for this plugin, you can do so from [here](https://github.com/Solidie/redeem-code).
 
 == Third Party Integrations ==
 
@@ -51,17 +52,14 @@ To use this plugins, please note that you need to install WooCommerce as well as
 
 == Frequently Asked Questions ==
 
-= Any limit on how many code can be created? =
-No limit
+= Any limit on how many redeem code can be created? =
+There is no limit on how many redeem code can be created.
 
 = Can I sell codes on partners site? =
 Yes. That's what the goal of this plugin is mainly. 
 
 = What type of product can redeem codes be sold for? =
-Any prodcut
-
-= Can I sell subscription? =
-Yes, No matter subscription or anything else. Applying redeem code will just assign specific variation to a user. 
+Any WooCommerce prodcut that is either simple, variable or variable subscription.
 
 = How can I suggest new features? =
 You can [create issue](https://github.com/Solidie/redeem-code/issues) on Github repository or write here in [support channel](https://wordpress.org/support/plugin/redeem-code/).

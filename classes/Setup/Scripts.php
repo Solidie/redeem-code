@@ -53,12 +53,14 @@ class Scripts {
 
 		// Load dynamic colors
 		$dynamic_colors = Colors::getColors( $this->getColorScheme() );
-		$redeem_colors = '';
+		$redeem_colors = ':root{';
 		foreach ( $dynamic_colors as $name => $code ) {
 			$redeem_colors .= '--solidie-color-' . esc_attr( $name ) . ':' . esc_attr( $code ) . ';';
 		}
+		$redeem_colors .= '}';
 
-		include Main::$configs->dir . 'templates/style.php';
+		wp_enqueue_style( 'redeem-code-style', Main::$configs->dist_url . 'libraries/colors-loader.css' );
+		wp_add_inline_style( 'redeem-code-style', $redeem_colors );
 	}
 
 	/**
