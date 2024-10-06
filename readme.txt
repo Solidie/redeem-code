@@ -66,6 +66,6 @@ You can [create issue](https://github.com/Solidie/redeem-code/issues) on Github 
 
 == Changelog ==
 
-= v1.0.0 -> Oct 30, 2024 =
+= v1.0.0 -> Oct 06, 2024 =
 --------------------------
 * New: Initial release

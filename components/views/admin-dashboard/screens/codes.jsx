@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import {WpDashboardFullPage} from 'solidie-materials/backend-dashboard-container/full-page-container.jsx';
-import {__, isEmpty, getRandomString} from 'solidie-materials/helpers.jsx';
+import {__, isEmpty, getRandomString, copyToClipboard} from 'solidie-materials/helpers.jsx';
 import {DropDown} from 'solidie-materials/dropdown/dropdown';
 import {Modal} from 'solidie-materials/modal';
 import {TextField} from 'solidie-materials/text-field/text-field';
@@ -13,6 +13,8 @@ import {ContextToast} from 'solidie-materials/toast/toast';
 import {TableStat} from 'solidie-materials/table-stat';
 import {confirm} from 'solidie-materials/prompts';
 import {Pagination} from 'solidie-materials/pagination/pagination';
+
+const shortcode_name = '[redeem_code_apply_form]';
 
 function AddModal({product_title, variation_title, onClose}) {
 
@@ -140,7 +142,7 @@ function AddModal({product_title, variation_title, onClose}) {
 
 export function ScreenCodes({products=[]}) {
 
-	const {ajaxToast} = useContext(ContextToast);
+	const {ajaxToast, addToast} = useContext(ContextToast);
 	const {product_id, variation_id} = useParams();
 	const navigate = useNavigate();
 
@@ -378,13 +380,13 @@ export function ScreenCodes({products=[]}) {
 				<h3 className={'font-weight-600'.classNames()}>
 					{__('Apply Form Shortcode')}
 				</h3>
-				<code>
-					[redeem_code_apply_form]
+				<code className={'font-weight-600 cursor-pointer'.classNames()} onClick={()=>copyToClipboard( shortcode_name, addToast)}>
+					{shortcode_name}
 				</code>
-				<small className={'d-block margin-top-15'.classNames()}>
+				<small className={'d-block margin-top-15 font-size-14 '.classNames()}>
 					{__('Copy the shortcode and paste it into your page or post')}
 				</small>
-				<small className={'d-block margin-top-5'.classNames()}>
+				<small className={'d-block margin-top-5 font-size-14 color-warning'.classNames()}>
 					{__('Recommended for virtual products only for now. We will add offline products support soon.')}
 				</small>
 			</div>
