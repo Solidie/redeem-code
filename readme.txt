@@ -4,7 +4,7 @@ Tags: gift card, coupon, discount, redeem code, woocommerce
 Requires at least: 6.1
 Tested up to: 6.6.2
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv3
 License URI: https://opensource.org/licenses/GPL-3.0
 
@@ -65,6 +65,10 @@ Any WooCommerce prodcut that is either simple, variable or variable subscription
 You can [create issue](https://github.com/Solidie/redeem-code/issues) on Github repository or write here in [support channel](https://wordpress.org/support/plugin/redeem-code/).
 
 == Changelog ==
+
+= v1.0.1 -> Oct 13, 2024 =
+--------------------------
+* Update: Script loading minimized
 
 = v1.0.0 -> Oct 06, 2024 =
 --------------------------

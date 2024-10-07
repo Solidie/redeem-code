@@ -1,6 +1,6 @@
 {
   "name": "redeem-code",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Apply redeem code to unlock product or content",
   "main": "index.js",
   "scripts": {

@@ -4,7 +4,7 @@
  * Plugin URI: https://solidie.com
  * Description: Unlock product using redeem code
  * Author: JK
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author URI: https://www.linkedin.com/in/jayedulk/
  * Requires Plugins: woocommerce
  * Requires at least: 6.1

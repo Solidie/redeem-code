@@ -110,7 +110,9 @@ class Scripts {
 	 * @return void
 	 */
 	public function frontendScripts() {
-		wp_enqueue_script( 'redeem-code-frontend', Main::$configs->dist_url . 'frontend.js', array( 'jquery' ), Main::$configs->version, true );
+		if ( ! is_front_page() && ( is_singular() || is_single() ) ) {
+			wp_enqueue_script( 'redeem-code-frontend', Main::$configs->dist_url . 'frontend.js', array( 'jquery' ), Main::$configs->version, true );
+		}
 	}
 
 	/**
