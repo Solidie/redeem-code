@@ -65,16 +65,17 @@ class CodeController {
 	 * @param int $variation_id Optional. The ID of the product variation. Default 0.
 	 * @return void
 	 */
-	public static function fetchRedeemCodes( int $product_id, int $page, int $variation_id = 0, string $status = 'all' ) {
+	public static function fetchRedeemCodes( int $product_id, int $page, int $variation_id = 0, string $status = 'all', string $prefix = '', string $mode = 'view' ) {
 		
-		$args         = compact( 'product_id', 'variation_id', 'page', 'status' );
+		$is_export    = $mode === 'export';
+		$limit        = $is_export ? null : 30;
+		$args         = compact( 'product_id', 'variation_id', 'page', 'status', 'prefix', 'limit', 'mode' );
 		$codes        = RedeemCode::getCodes( $args );
-		$segmentation = RedeemCode::getCodes( $args, true );
 
 		wp_send_json_success(
 			array(
 				'codes'        => $codes,
-				'segmentation' => $segmentation,
+				'segmentation' => ! $is_export ? RedeemCode::getCodes( $args, true ) : null,
 			)
 		);
 	}

@@ -42,6 +42,8 @@ Please share your valuable review [here](https://wordpress.org/plugins/redeem-co
 
 = Documentation and Support =
 
+Learn how to get started with [Redeem Code](https://solidie.com/wordpress/how-to-apply-redeem-code-on-woocommerce-product/) plugin.
+
 If you have any questions or problems using this plugin, you can write here in [support channel](https://wordpress.org/support/plugin/redeem-code/)
 
 There are several minified JavaScript file that are built with React JS and compiled with Webpack. If you want to access the unminified files for this plugin, you can do so from [here](https://github.com/Solidie/redeem-code).
@@ -68,6 +70,8 @@ You can [create issue](https://github.com/Solidie/redeem-code/issues) on Github 
 
 = v1.0.1 -> Oct 13, 2024 =
 --------------------------
+* New: Export bulk codes
+* New: Filter codes by prefix
 * Update: Script loading minimized
 
 = v1.0.0 -> Oct 06, 2024 =

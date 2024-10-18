@@ -86,10 +86,14 @@ class RedeemCode {
 		global $wpdb;
 
 		$where_clause = '';
+		$limit_offset = '';
 
-		$limit  = 30;
-		$page   = max( 1, ( $args['page'] ?? 1 ) );
-		$offset = ( $page - 1 ) * $limit;
+		if ( ! empty( $args['limit'] ) ) {
+			$limit        = $args['limit'];
+			$page         = max( 1, ( $args['page'] ?? 1 ) );
+			$offset       = ( $page - 1 ) * $limit;
+			$limit_offset = $wpdb->prepare( 'LIMIT %d OFFSET %d', $limit, $offset );
+		}
 
 		// Get only applied codes
 		if ( ( $args['status'] ?? false ) === 'used' ) {
@@ -111,6 +115,25 @@ class RedeemCode {
 			$where_clause .= $wpdb->prepare( ' AND _code.variation_id=%d', $args['variation_id'] );
 		}
 
+		// Filter codes by prefix
+		if ( ! empty( $args['prefix'] ) ) {
+			$where_clause .= ' AND _code.redeem_code LIKE \'' . sanitize_text_field( $args['prefix'] ) . '%\'';
+		}
+
+		// Get codes only if it s export mode
+		if ( 'export' === ( $args['mode'] ?? null ) ) {
+			return $wpdb->get_col(
+				"SELECT 
+					_code.redeem_code
+				FROM 
+					{$wpdb->redeem_codes} _code
+					LEFT JOIN {$wpdb->users} _user ON _code.customer_id=_user.ID
+				WHERE 1=1 {$where_clause}
+				ORDER BY _code.code_id DESC"
+			);
+		}
+
+		// If segmentation, then get pagination factors
 		if ( $segmentation ) {
 			$total_count = (int) $wpdb->get_var(
 				"SELECT 
@@ -132,21 +155,18 @@ class RedeemCode {
 			);
 		}
 
+		// If neither export nor segmentation, get paginated codes
 		$codes = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT 
-					_code.*,
-					_user.display_name
-				FROM
-					{$wpdb->redeem_codes} _code
-					LEFT JOIN {$wpdb->users} _user ON _code.customer_id=_user.ID
-				WHERE
-					1=1 {$where_clause}
-				ORDER BY _code.code_id DESC
-				LIMIT %d OFFSET %d",
-				$limit,
-				$offset
-			),
+			"SELECT 
+				_code.*,
+				_user.display_name
+			FROM
+				{$wpdb->redeem_codes} _code
+				LEFT JOIN {$wpdb->users} _user ON _code.customer_id=_user.ID
+			WHERE
+				1=1 {$where_clause}
+			ORDER BY _code.code_id DESC
+			{$limit_offset}",
 			ARRAY_A
 		);
 

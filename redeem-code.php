@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: Redeem Code
- * Plugin URI: https://solidie.com
+ * Plugin URI: https://wordpress.org/plugins/redeem-code/
  * Description: Unlock product using redeem code
- * Author: JK
+ * Author: Solidie
  * Version: 1.0.1
- * Author URI: https://www.linkedin.com/in/jayedulk/
+ * Author URI: https://solidie.com/
  * Requires Plugins: woocommerce
  * Requires at least: 6.1
  * Tested up to: 6.6.2

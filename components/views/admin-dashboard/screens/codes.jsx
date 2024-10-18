@@ -154,12 +154,16 @@ export function ScreenCodes({products=[]}) {
 		fetching: false,
 		redeem_codes: [],
 		segmentation: {},
-		selected_codes: [],
-		filters: {
-			page: 1,
-			status: 'all'
-		}
+		selected_codes: []
 	});
+
+	const [filterState, setFilterState] = useState({
+		prefix: '',
+		page: 1,
+		status: 'all'
+	});
+
+	const [exporting, setExporting] = useState(false);
 
 	const prod_variations = products.find(p=>p.product_id==product_id)?.variations?.map?.(p=>{return {id: p.variation_id, label: p.variation_title}}) || [];
 
@@ -174,7 +178,7 @@ export function ScreenCodes({products=[]}) {
 			fetching: true
 		});
 
-		request('fetchRedeemCodes', {product_id, variation_id, ...state.filters}, resp=>{
+		request('fetchRedeemCodes', {product_id, variation_id, ...filterState}, resp=>{
 			
 			const {success, data:{codes: redeem_codes=[], segmentation={}}} = resp;
 
@@ -197,14 +201,52 @@ export function ScreenCodes({products=[]}) {
 		setToggleStates({...toggleState, [name]: show});
 	}
 
-	const setFilter=(name, value)=>{
-		setState({
-			...state,
-			filters: {
-				...state.filters,
-				[name]: value
+	const exportCodes=()=>{
+
+		if ( exporting ) {
+			return;
+		}
+		
+		setExporting(true);
+		
+		request('fetchRedeemCodes', {...filterState, product_id, variation_id, mode: 'export'}, resp=>{
+
+			setExporting(false);
+			
+			if ( !resp.success ) {
+				ajaxToast(resp);
+				return;
 			}
-		})
+
+			// Create a new Blob object using the text content
+			const blob = new Blob([resp.data.codes.join('\n')], { type: 'text/plain' });
+
+			// Create a link element
+			const link = document.createElement('a');
+
+			// Create a URL for the Blob and set it as the link's href attribute
+			link.href = URL.createObjectURL(blob);
+
+			// Set the download attribute with the filename
+			link.download = `Redeem Codes - ${product_id} ${variation_id ? ` - ${variation_id}` : ''}.txt`;
+
+			// Append the link to the document body
+			document.body.appendChild(link);
+
+			// Programmatically trigger the click event to start the download
+			link.click();
+
+			// Remove the link after downloading
+			document.body.removeChild(link);
+		});
+	}
+
+	const setFilter=(name, value)=>{
+		setFilterState({
+			...filterState,
+			page: name !== 'page' ? 1 : value,
+			[name]: value,
+		});
 	}
 	
 	const setProduct=(product_id, variation_id)=>{
@@ -250,7 +292,7 @@ export function ScreenCodes({products=[]}) {
 
 	useEffect(()=>{
 		fetchCodes();
-	}, [product_id, variation_id, state.filters]);
+	}, [product_id, variation_id, filterState]);
 
 	return <WpDashboardFullPage>
 
@@ -302,12 +344,14 @@ export function ScreenCodes({products=[]}) {
 								{__('Delete')}
 							</span>
 						</span>
-						
 					}
 
 					{
 						!product_id ? null :
-						<span className={'d-flex align-items-center column-gap-5 color-material-80 cursor-pointer'.classNames()} onClick={()=>toggle('add_modal', true)}>
+						<span 
+							className={'d-flex align-items-center column-gap-5 color-material-80 cursor-pointer'.classNames()} 
+							onClick={()=>toggle('add_modal', true)}
+						>
 							<i className={'sicon sicon-add-square font-size-18'.classNames()}></i>
 							<span>
 								{__('Add Codes')}
@@ -315,12 +359,34 @@ export function ScreenCodes({products=[]}) {
 						</span>
 					}
 
+					{
+						isEmpty(state.redeem_codes) ? null :
+						<span 
+							className={'d-flex align-items-center column-gap-5 color-material-80 cursor-pointer'.classNames()} 
+							onClick={exportCodes}
+						>
+							<i className={'sicon sicon-download font-size-18'.classNames()}></i>
+							<span>
+								{__('Export Codes')}
+							</span>
+						</span>
+					}
+
 					<div>
 						<DropDown
-							value={state.filters.status}
+							value={filterState.status}
 							options={[{id: 'all', label: __('All')}, {id: 'used', label: __('Used')}, {id: 'unused', label: __('Unused')}]}
 							onChange={v=>setFilter('status', v)}
 							clearable={false}
+						/>
+					</div>
+
+					<div style={{width: '100px'}}>
+						<TextField
+							type='text'
+							value={filterState.prefix || ''}
+							onChange={v=>setFilter('prefix', v)}
+							placeholder={__('Prefix')}
 						/>
 					</div>
 				</div>
