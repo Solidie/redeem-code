@@ -316,8 +316,8 @@ export function ScreenCodes({products=[]}) {
 				{__('Redeem Codes')} {state.segmentation.total_count ? `(${state.segmentation.total_count})` : null}
 			</h2>
 			
-			<div className={'d-flex align-items-center justify-content-space-between'.classNames()}>
-				<div className={'d-flex align-items-center column-gap-15'.classNames()}>
+			<div className={'d-flex align-items-center flex-wrap-wrap column-gap-15 row-gap-15'.classNames()}>
+				<div className={'flex-1 d-flex align-items-center column-gap-15 row-gap-15 flex-wrap-wrap'.classNames()}>
 					<DropDown
 						value={parseInt(product_id)}
 						options={products.map(p=>{return {id: p.product_id, label: p.product_title}})}
@@ -334,44 +334,7 @@ export function ScreenCodes({products=[]}) {
 							placeholder={__('Select Variation')}
 						/>
 					}
-				</div>
-				<div className={'d-flex align-items-center column-gap-15'.classNames()}>
-					{
-						!state.selected_codes.length ? null : 
-						<span className={'d-flex align-items-center column-gap-5 color-error cursor-pointer'.classNames()} onClick={deleteCodes}>
-							<i className={'sicon sicon-trash font-size-18'.classNames()}></i>
-							<span>
-								{__('Delete')}
-							</span>
-						</span>
-					}
-
-					{
-						!product_id ? null :
-						<span 
-							className={'d-flex align-items-center column-gap-5 color-material-80 cursor-pointer'.classNames()} 
-							onClick={()=>toggle('add_modal', true)}
-						>
-							<i className={'sicon sicon-add-square font-size-18'.classNames()}></i>
-							<span>
-								{__('Add Codes')}
-							</span>
-						</span>
-					}
-
-					{
-						isEmpty(state.redeem_codes) ? null :
-						<span 
-							className={'d-flex align-items-center column-gap-5 color-material-80 cursor-pointer'.classNames()} 
-							onClick={exportCodes}
-						>
-							<i className={'sicon sicon-download font-size-18'.classNames()}></i>
-							<span>
-								{__('Export Codes')}
-							</span>
-						</span>
-					}
-
+					
 					<div>
 						<DropDown
 							value={filterState.status}
@@ -389,6 +352,44 @@ export function ScreenCodes({products=[]}) {
 							placeholder={__('Prefix')}
 						/>
 					</div>
+				</div>
+				<div className={'d-flex align-items-center justify-content-flex-end column-gap-15 row-gap-15 flex-wrap-wrap'.classNames()}>
+					{
+						!state.selected_codes.length ? null : 
+						<span className={'d-flex align-items-center column-gap-5 color-error cursor-pointer'.classNames()} onClick={deleteCodes}>
+							<i className={'sicon sicon-trash font-size-18'.classNames()}></i>
+							<span>
+								{__('Delete')}
+							</span>
+						</span>
+					}
+
+					{
+						isEmpty(state.redeem_codes) ? null :
+						<span 
+							className={'d-flex align-items-center column-gap-5 color-material-80 cursor-pointer'.classNames()} 
+							onClick={exportCodes}
+						>
+							<i className={'sicon sicon-download font-size-18'.classNames()}></i>
+							<span>
+								{__('Export Codes')}
+							</span>
+						</span>
+					}
+
+					{
+						!product_id ? null :
+						<span 
+							className={'d-flex align-items-center column-gap-5 color-material-80 cursor-pointer'.classNames()} 
+							onClick={()=>toggle('add_modal', true)}
+						>
+							<i className={'sicon sicon-add-square font-size-18'.classNames()}></i>
+							<span>
+								{__('Add Codes')}
+							</span>
+						</span>
+					}
+
 				</div>
 			</div>
 
