@@ -72,6 +72,7 @@ You can [create issue](https://github.com/Solidie/redeem-code/issues) on Github 
 --------------------------
 * New: Export bulk codes
 * New: Filter codes by prefix
+* Update: Mobile view enhanced
 * Update: Script loading minimized
 
 = v1.0.0 -> Oct 06, 2024 =

@@ -228,7 +228,7 @@ export function ScreenCodes({products=[]}) {
 			link.href = URL.createObjectURL(blob);
 
 			// Set the download attribute with the filename
-			link.download = `Redeem Codes - ${product_id} ${variation_id ? ` - ${variation_id}` : ''}.txt`;
+			link.download = `Redeem-Codes.txt`;
 
 			// Append the link to the document body
 			document.body.appendChild(link);
